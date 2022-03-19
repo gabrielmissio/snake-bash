@@ -11,5 +11,7 @@ module.exports = {
     ecmaVersion: 'latest',
   },
   rules: {
+    'no-plusplus': ['error', { allowForLoopAfterthoughts: true }],
+    'no-console': 'off',
   },
 };
