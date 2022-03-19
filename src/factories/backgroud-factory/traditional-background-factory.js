@@ -1,3 +1,5 @@
+const { ComponentsEnum: { BRICK, EMPITY } } = require('../../utils/enums');
+
 class TraditionalBackgroundFactory {
   constructor({ session }) {
     this.session = session;
@@ -14,9 +16,9 @@ class TraditionalBackgroundFactory {
         const isBoarderRightAndDown = i === (row - 1) || j === (column - 1);
 
         if (isBoarderLeftAndUp || isBoarderRightAndDown) {
-          this.session.board[i].push('#');
+          this.session.board[i].push(BRICK);
         } else {
-          this.session.board[i].push(' ');
+          this.session.board[i].push(EMPITY);
         }
       }
     }
