@@ -1,6 +1,7 @@
 const ComponentsEnum = {
   BRICK: '#',
-  SNAKE: '*',
+  SNAKE_BODY: '*',
+  SNAKE_HEAD: '@',
   TARGET: '$',
   EMPITY: ' ',
 };
