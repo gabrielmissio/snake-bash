@@ -6,7 +6,7 @@ class TraditionalBackgroundFactory {
   }
 
   makeBackground({ row = 20, column = 20 } = {}) {
-    this.session.board = [[]];
+    this.session.board = [];
 
     for (let i = 0; i < row; i++) {
       this.session.board.push([]);
