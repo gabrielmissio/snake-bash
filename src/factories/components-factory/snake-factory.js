@@ -32,9 +32,11 @@ class SnakeFactory {
     nextHeadPosition.column = column;
 
     if (this.isGameOver()) throw new Error('GAME OVER');
-    if (!this.isScore()) {
+    if (this.isScore()) {
+      // throw event
+    } else {
       board[body[0].row][body[0].column] = EMPITY;
-      body.pop();
+      body.reverse().pop();
     }
 
     body.push({ ...currentHeadPosition });
@@ -49,9 +51,9 @@ class SnakeFactory {
 
     const options = {
       [RIGTH]: () => ({ row: currentHeadPosition.row, column: currentHeadPosition.column + 1 }),
-      [LEFT]: { row: currentHeadPosition.row, column: currentHeadPosition.column - 1 },
-      [DOWN]: { row: currentHeadPosition.row + 1, column: currentHeadPosition.column },
-      [UP]: { row: currentHeadPosition.row - 1, column: currentHeadPosition.column },
+      [LEFT]: () => ({ row: currentHeadPosition.row, column: currentHeadPosition.column - 1 }),
+      [DOWN]: () => ({ row: currentHeadPosition.row + 1, column: currentHeadPosition.column }),
+      [UP]: () => ({ row: currentHeadPosition.row - 1, column: currentHeadPosition.column }),
     };
 
     return options[currentDirection]();
