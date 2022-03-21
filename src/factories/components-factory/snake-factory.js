@@ -35,11 +35,12 @@ class SnakeFactory {
     if (this.isScore()) {
       emitter.emit('score');
     } else {
-      board[body[0].row][body[0].column] = EMPITY;
-      body.reverse().pop();
+      const highestIndex = body.length - 1;
+      board[body[highestIndex].row][body[highestIndex].column] = EMPITY;
+      body.pop();
     }
 
-    body.push({ ...currentHeadPosition });
+    body.unshift({ ...currentHeadPosition });
     currentHeadPosition.row = row;
     currentHeadPosition.column = column;
 
