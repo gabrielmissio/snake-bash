@@ -1,27 +1,24 @@
 const { ComponentsEnum: { BRICK, EMPITY } } = require('../../utils/enums');
 
 class TraditionalBackgroundFactory {
-  constructor({ session }) {
-    this.session = session;
-  }
 
-  makeBackground({ row = 20, column = 20 } = {}) {
-    this.session.board = [];
-
+  static makeBackground({ row = 20, column = 20 } = {}) {
+    const backgroud = [];
     for (let i = 0; i < row; i++) {
-      this.session.board.push([]);
+      backgroud.push([]);
 
       for (let j = 0; j < column; j++) {
         const isBoarderLeftAndUp = i === 0 || j === 0;
         const isBoarderRightAndDown = i === (row - 1) || j === (column - 1);
 
-        if (isBoarderLeftAndUp || isBoarderRightAndDown) {
-          this.session.board[i].push(BRICK);
-        } else {
-          this.session.board[i].push(EMPITY);
-        }
+        const isBorder = isBoarderLeftAndUp || isBoarderRightAndDown;
+        const componentToPush = isBorder ? BRICK : EMPITY;
+
+        backgroud[i].push(componentToPush);
       }
     }
+
+    return backgroud;
   }
 }
 
