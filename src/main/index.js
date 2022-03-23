@@ -3,7 +3,7 @@ const EventEmitter = require('events');
 class MyEmitter extends EventEmitter {}
 const myEmitter = new MyEmitter();
 
-const { KeyboardInput } = require('../input');
+const { KeyboardInput } = require('../inputs');
 const { TraditionalBackgroundFactory } = require('../factories/backgroud-factory');
 const { TargetFactory, SnakeFactory } = require('../factories/components-factory');
 
