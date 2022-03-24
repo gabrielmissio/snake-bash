@@ -1,6 +1,7 @@
 const { KeyboardInput } = require('../inputs');
 const { DevelopmentOutput: output } = require('../outputs');
 const { makeGameManager } = require('./game-manager-factory');
+const { GAMEOVER } = require('../utils/enums/status-enum');
 
 const gameManager = makeGameManager();
 const { board, snake, target } = gameManager.properties;
@@ -25,7 +26,7 @@ const nextFrame = () => {
 const run = () => {
   setTimeout(() => {
     nextFrame();
-    const isGameOver = gameManager.properties.status !== 0;
+    const isGameOver = gameManager.properties.status === GAMEOVER;
     return isGameOver ? gameOver() : run();
   }, 250);
 };

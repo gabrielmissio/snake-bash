@@ -1,5 +1,6 @@
 const {
-  CostumesEnum: { BRICK, SNAKE, TARGET }
+  CostumesEnum: { BRICK, SNAKE, TARGET },
+  StatusEnum: { GAMEOVER, RUNNING }
 } = require('../utils/enums');
 
 class GameManager {
@@ -8,7 +9,7 @@ class GameManager {
       board,
       snake,
       target,
-      status: 0,
+      status: RUNNING,
       score: 0
     };
   }
@@ -31,7 +32,7 @@ class GameManager {
   }
 
   gameOverHandler() {
-    this.properties.status = 1;
+    this.properties.status = GAMEOVER;
   }
 
   scoreHandler() {
