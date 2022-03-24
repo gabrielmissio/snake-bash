@@ -16,8 +16,8 @@ class SnakeFactory {
     const { body } = this.properties;
     body.unshift(this.getNextPosition());
 
-    if (isGameOver({ snake: this })) return gameOverHandler();
-    if (isScore({ snake: this })) return scoreHandler();
+    if (isGameOver()) return gameOverHandler();
+    if (isScore()) return scoreHandler();
     return body.pop();
   }
 
