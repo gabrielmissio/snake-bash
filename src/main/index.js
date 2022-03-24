@@ -2,7 +2,7 @@ const { KeyboardInput } = require('../inputs');
 const { DevelopmentOutput: output } = require('../outputs');
 const { makeGameManager } = require('./game-manager-factory');
 
-const gameManager = makeGameManager(); 
+const gameManager = makeGameManager();
 const { board, snake, target } = gameManager.properties;
 
 board.updateSnake({ snake });
@@ -15,7 +15,7 @@ const run = () => {
       isScore: () => gameManager.isScore(),
       isGameOver: () => gameManager.isGameOver(),
       gameOverHandler: () => gameManager.gameOverHandler(),
-      scoreHandler: () =>  gameManager.scoreHandler(),
+      scoreHandler: () => gameManager.scoreHandler()
     });
 
     board.updateSnake({ snake });
@@ -29,8 +29,8 @@ const run = () => {
 
 const input = new KeyboardInput({
   // eslint-disable-next-line no-return-assign
-  eventHandler: (key) => snake.properties.currentDirection = parseInt(key, 10),
-  stopCondition: (key) => key === 'q',
+  eventHandler: (key) => (snake.properties.currentDirection = parseInt(key, 10)),
+  stopCondition: (key) => key === 'q'
 });
 
 input.listen();

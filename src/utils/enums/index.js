@@ -3,5 +3,5 @@ const DirectionsEnum = require('./directions-enum');
 
 module.exports = {
   ComponentsEnum,
-  DirectionsEnum,
+  DirectionsEnum
 };

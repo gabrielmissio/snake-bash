@@ -3,7 +3,7 @@ const ComponentsEnum = {
   SNAKE_BODY: '*',
   SNAKE_HEAD: '@',
   TARGET: '$',
-  EMPITY: ' ',
+  EMPITY: ' '
 };
 
 module.exports = Object.freeze(ComponentsEnum);

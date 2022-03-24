@@ -1,11 +1,11 @@
 const { DirectionsEnum } = require('../utils/enums');
 
 class Snake {
-  constructor({ startingPosition, startingDirection  } = {}) {
-    const row = startingPosition && startingPosition.row || 2;
-    const column = startingPosition && startingPosition.column || 2;
+  constructor({ startingPosition, startingDirection } = {}) {
+    const row = (startingPosition && startingPosition.row) || 2;
+    const column = (startingPosition && startingPosition.column) || 2;
     const currentDirection = startingDirection || DirectionsEnum.RIGTH;
-    
+
     this.properties = {
       currentDirection,
       body: [{ row, column }]
@@ -33,7 +33,7 @@ class Snake {
       [DirectionsEnum.RIGTH]: { row: currentHeadPosition.row, column: currentHeadPosition.column + 1 },
       [DirectionsEnum.LEFT]: { row: currentHeadPosition.row, column: currentHeadPosition.column - 1 },
       [DirectionsEnum.DOWN]: { row: currentHeadPosition.row + 1, column: currentHeadPosition.column },
-      [DirectionsEnum.UP]: { row: currentHeadPosition.row - 1, column: currentHeadPosition.column },
+      [DirectionsEnum.UP]: { row: currentHeadPosition.row - 1, column: currentHeadPosition.column }
     };
 
     return options[currentDirection];

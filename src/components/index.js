@@ -5,5 +5,5 @@ const Target = require('./target');
 module.exports = {
   Board,
   Snake,
-  Target,
+  Target
 };

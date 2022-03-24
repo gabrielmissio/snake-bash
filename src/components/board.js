@@ -1,9 +1,11 @@
-const { ComponentsEnum: { SNAKE_HEAD, SNAKE_BODY, TARGET, EMPITY } } = require('../utils/enums');
+const {
+  ComponentsEnum: { SNAKE_HEAD, SNAKE_BODY, TARGET, EMPITY }
+} = require('../utils/enums');
 
 class Board {
   constructor({ background, boardSize }) {
-    const row = boardSize && boardSize.row || 15;
-    const column = boardSize && boardSize.column || 15;
+    const row = (boardSize && boardSize.row) || 15;
+    const column = (boardSize && boardSize.column) || 15;
 
     this.properties = background.makeBackground({ row, column });
   }
@@ -25,7 +27,7 @@ class Board {
   }
 
   updateTarget({ target }) {
-    const { row, column } = target.getCurrentPosition()
+    const { row, column } = target.getCurrentPosition();
     this.properties[row][column] = TARGET;
   }
 
