@@ -1,5 +1,5 @@
 const { KeyboardInput } = require('../inputs');
-const { DevelopmentOutput: output } = require('../outputs');
+const { MainOutput: output } = require('../outputs');
 const { makeGameManager } = require('./game-manager-factory');
 const { GAMEOVER } = require('../utils/enums/status-enum');
 
