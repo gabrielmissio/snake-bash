@@ -1,6 +1,6 @@
-const { ComponentsEnum: { BRICK, EMPITY } } = require('../../utils/enums');
+const { ComponentsEnum: { BRICK, EMPITY } } = require('../utils/enums');
 
-class TraditionalBackgroundFactory {
+class TraditionalBackground {
 
   static makeBackground({ row = 20, column = 20 } = {}) {
     const backgroud = [];
@@ -22,4 +22,4 @@ class TraditionalBackgroundFactory {
   }
 }
 
-module.exports = TraditionalBackgroundFactory;
+module.exports = TraditionalBackground;

@@ -1,11 +1,11 @@
-const { ComponentsEnum: { SNAKE_HEAD, SNAKE_BODY, TARGET, EMPITY } } = require('../../utils/enums');
+const { ComponentsEnum: { SNAKE_HEAD, SNAKE_BODY, TARGET, EMPITY } } = require('../utils/enums');
 
-class BoardFactory {
-  constructor({ backgroundFactory, boardSize }) {
+class Board {
+  constructor({ background, boardSize }) {
     const row = boardSize && boardSize.row || 15;
     const column = boardSize && boardSize.column || 15;
 
-    this.properties = backgroundFactory.makeBackground({ row, column });
+    this.properties = background.makeBackground({ row, column });
   }
 
   getAvailablePositions() {
@@ -40,4 +40,4 @@ class BoardFactory {
   }
 }
 
-module.exports = BoardFactory;
+module.exports = Board;

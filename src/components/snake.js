@@ -1,6 +1,6 @@
-const { DirectionsEnum } = require('../../utils/enums');
+const { DirectionsEnum } = require('../utils/enums');
 
-class SnakeFactory {
+class Snake {
   constructor({ startingPosition, startingDirection  } = {}) {
     const row = startingPosition && startingPosition.row || 2;
     const column = startingPosition && startingPosition.column || 2;
@@ -44,4 +44,4 @@ class SnakeFactory {
   }
 }
 
-module.exports = SnakeFactory;
+module.exports = Snake;

@@ -1,6 +1,6 @@
-const { GetRandomArbitrary } = require('../../utils/helpers');
+const { GetRandomArbitrary } = require('../utils/helpers');
 
-class TargetFactory {
+class Target {
   constructor({ startingPosition } = {}) {
     const row = startingPosition && startingPosition.row || 5;
     const column = startingPosition && startingPosition.column || 5;
@@ -21,4 +21,4 @@ class TargetFactory {
   }
 }
 
-module.exports = TargetFactory;
+module.exports = Target;
