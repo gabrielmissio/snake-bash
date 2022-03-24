@@ -1,9 +1,9 @@
 const { GetRandomArbitrary } = require('../../utils/helpers');
 
 class TargetFactory {
-  constructor({ startingPosition }) {
-    const row = startingPosition.row || 5;
-    const column = startingPosition.column || 5;
+  constructor({ startingPosition } = {}) {
+    const row = startingPosition && startingPosition.row || 5;
+    const column = startingPosition && startingPosition.column || 5;
 
     this.properties = { row, column };
   }

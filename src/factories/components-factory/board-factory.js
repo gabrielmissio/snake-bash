@@ -2,21 +2,21 @@ const { ComponentsEnum: { SNAKE_HEAD, SNAKE_BODY, TARGET, EMPITY } } = require('
 
 class BoardFactory {
   constructor({ backgroundFactory, boardSize }) {
-    const row = boardSize.row || 15;
-    const column = boardSize.column || 15;
+    const row = boardSize && boardSize.row || 15;
+    const column = boardSize && boardSize.column || 15;
 
-    this.board = backgroundFactory.makeBackground({ row, column });
+    this.properties = backgroundFactory.makeBackground({ row, column });
   }
 
   getAvailablePositions() {
     const availablePositions = [];
-    const rowSize = this.board.length;
+    const rowSize = this.properties.length;
 
     for (let i = 0; i < rowSize; i++) {
-      const columnSize = this.board[i].length;
+      const columnSize = this.properties[i].length;
 
       for (let j = 0; j < columnSize; j++) {
-        const isAvailable = this.board[i][j] === EMPITY;
+        const isAvailable = this.properties[i][j] === EMPITY;
         if (isAvailable) availablePositions.push({ row: i, column: j });
       }
     }
@@ -24,16 +24,16 @@ class BoardFactory {
 
   updateTarget({ target }) {
     const { row, column } = target.getCurrentPosition()
-    this.board[row][column] = TARGET;
+    this.properties[row][column] = TARGET;
   }
 
   updateSnake({ snake }) {
     const headPosition = snake.getHeadPosition();
-    this.board[headPosition.row][headPosition.column] = SNAKE_HEAD;
+    this.properties[headPosition.row][headPosition.column] = SNAKE_HEAD;
 
     const { body } = snake.properties;
     for (let i = 0; i < body.length; i++) {
-      this.board[body[i].row][body[i].column] = SNAKE_BODY;
+      this.properties[body[i].row][body[i].column] = SNAKE_BODY;
     }
   }
 }

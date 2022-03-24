@@ -2,8 +2,8 @@ const { DirectionsEnum } = require('../../utils/enums');
 
 class SnakeFactory {
   constructor({ startingPosition, startingDirection  } = {}) {
-    const row = startingPosition.row || 2;
-    const column = startingPosition.column || 2;
+    const row = startingPosition && startingPosition.row || 2;
+    const column = startingPosition && startingPosition.column || 2;
     const currentDirection = startingDirection || DirectionsEnum.RIGTH;
     
     this.properties = {
