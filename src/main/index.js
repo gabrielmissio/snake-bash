@@ -23,23 +23,24 @@ const nextFrame = () => {
   output.drawScore({ score: gameManager.properties.score });
 };
 
+const intervalBetweenFramesInMilliseconds = 200;
 const run = () => {
   setTimeout(() => {
     nextFrame();
     const isGameOver = gameManager.properties.status === GAMEOVER;
     return isGameOver ? gameOver() : run();
-  }, 250);
+  }, intervalBetweenFramesInMilliseconds);
 };
 
-const quitTheGame = (key) => key === 'q';
+const quitGame = (key) => key === 'q';
 const updateSnakeDirection = (key) => {
   snake.properties.currentDirection = parseInt(key, 10);
 };
 
 const input = new KeyboardInput({
   eventHandler: updateSnakeDirection,
-  stopCondition: quitTheGame
+  stopCondition: quitGame
 });
 
 input.listen();
-run();
+run(intervalBetweenFramesInMilliseconds);
