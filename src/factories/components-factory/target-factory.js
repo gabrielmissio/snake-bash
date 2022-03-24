@@ -1,33 +1,23 @@
 const { GetRandomArbitrary } = require('../../utils/helpers');
-const {
-  ComponentsEnum: {
-    EMPITY, TARGET,
-  },
-} = require('../../utils/enums');
 
 class TargetFactory {
-  constructor({ session }) {
-    this.session = session;
+  constructor({ startingPosition }) {
+    const row = startingPosition.row || 5;
+    const column = startingPosition.column || 5;
+
+    this.target = { row, column };
   }
 
-  makeTarget() {
-    while (!this.targetPositioned());
+  getCurrentPosition() {
+    return this.target;
   }
 
-  targetPositioned() {
-    const { board } = this.session;
-    const rowSize = board.length - 1;
-    const randomRow = GetRandomArbitrary.get({ min: 1, max: rowSize });
+  getNextPosition({ availablePositions  }) {
+    const max = availablePositions.length - 1;
+    const randomIndex = GetRandomArbitrary.get({ max, min: 0 });
 
-    const columnSize = board[randomRow].length - 1;
-    const randomColumn = GetRandomArbitrary.get({ min: 1, max: columnSize });
-
-    const isAvailable = board[randomRow][randomColumn] === EMPITY;
-    if (!isAvailable) return false;
-
-    board[randomRow][randomColumn] = TARGET;
-    this.session.target.position = { row: randomRow, column: randomColumn };
-    return true;
+    this.target = availablePositions[randomIndex];
+    return this.target;
   }
 }
 
