@@ -1,5 +1,5 @@
 const {
-  ComponentsEnum: { BRICK, EMPITY }
+  CostumesEnum: { BRICK, EMPITY }
 } = require('../utils/enums');
 
 class TraditionalBackground {

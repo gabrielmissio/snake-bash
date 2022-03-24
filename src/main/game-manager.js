@@ -1,5 +1,5 @@
 const {
-  ComponentsEnum: { BRICK, SNAKE_BODY, TARGET }
+  CostumesEnum: { BRICK, SNAKE, TARGET }
 } = require('../utils/enums');
 
 class GameManager {
@@ -25,7 +25,7 @@ class GameManager {
     const { row, column } = snake.getHeadPosition();
 
     const hitsBrick = board.properties[row][column] === BRICK;
-    const hitsSnakeBody = board.properties[row][column] === SNAKE_BODY;
+    const hitsSnakeBody = board.properties[row][column] === SNAKE;
 
     return hitsBrick || hitsSnakeBody;
   }

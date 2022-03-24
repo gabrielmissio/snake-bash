@@ -1,5 +1,5 @@
 const {
-  ComponentsEnum: { SNAKE_BODY, TARGET, EMPITY }
+  CostumesEnum: { SNAKE, TARGET, EMPITY }
 } = require('../utils/enums');
 
 class Board {
@@ -36,7 +36,7 @@ class Board {
 
     const { body } = snake.properties;
     for (let i = 0; i < body.length; i++) {
-      this.properties[body[i].row][body[i].column] = SNAKE_BODY;
+      this.properties[body[i].row][body[i].column] = SNAKE;
     }
   }
 
@@ -47,7 +47,7 @@ class Board {
       const columnSize = this.properties[i].length;
 
       for (let j = 0; j < columnSize; j++) {
-        const isSnakeFragment = this.properties[i][j] === SNAKE_BODY;
+        const isSnakeFragment = this.properties[i][j] === SNAKE;
         if (isSnakeFragment) this.properties[i][j] = EMPITY;
       }
     }
