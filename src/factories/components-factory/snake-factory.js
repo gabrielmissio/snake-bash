@@ -12,7 +12,7 @@ class SnakeFactory {
     };
   }
 
-  move({ isScore, scoreHandler, isGameOver, gameOverHandler }) {
+  move({ isScore, scoreHandler, isGameOver, gameOverHandler } = {}) {
     const { body } = this.properties;
     body.unshift(this.getNextPosition());
 
@@ -24,8 +24,9 @@ class SnakeFactory {
   getNextPosition() {
     const { currentDirection } = this.properties;
 
-    const invalidDirection = !(currentDirection in DirectionsEnum);
-    if (invalidDirection) throw new Error('INVALID DIRECTION');
+    const allowedValues = Object.values(DirectionsEnum);
+    const isValidDirection = allowedValues.includes(currentDirection);
+    if (!isValidDirection) throw new Error('INVALID DIRECTION');
 
     const currentHeadPosition = this.getHeadPosition();
     const options = {
