@@ -1,54 +1,44 @@
-const EventEmitter = require('events');
-
-class MyEmitter extends EventEmitter {}
-const myEmitter = new MyEmitter();
-
-const { KeyboardInput } = require('../inputs');
 const { TraditionalBackgroundFactory } = require('../factories/backgroud-factory');
-const { TargetFactory, SnakeFactory } = require('../factories/components-factory');
+const { BoardFactory, SnakeFactory, TargetFactory } = require('../factories/components-factory');
+const { KeyboardInput } = require('../inputs');
+const { DevelopmentOutput: output } = require('../outputs');
+const GameManager = require('./game-manager');
 
-const session = {
-  emitter: myEmitter,
-  target: {},
-  board: [],
-  snake: {},
-  status: 0,
-  score: 0,
-};
+const board = new BoardFactory({ backgroundFactory: TraditionalBackgroundFactory });
+const snake = new SnakeFactory();
+const target = new TargetFactory();
 
-const backgroud = new TraditionalBackgroundFactory({ session });
-backgroud.makeBackground({ row: 10, column: 10 });
+board.updateSnake({ snake });
+board.updateTarget({ target });
 
-const target = new TargetFactory({ session });
-target.makeTarget();
-
-const snake = new SnakeFactory({ session });
-snake.makeSnake();
-
-const run = () => {
-  setTimeout(() => {
-    snake.move();
-    console.table(session.board);
-    console.log(`SCORE: ${session.score}`);
-
-    if (session.status === 0) run();
-  }, 250);
-};
-
-const updateDirection = (key) => {
-  session.snake.currentDirection = key;
-};
-
+const gameManager = new GameManager({ board, snake, target });
 const input = new KeyboardInput({
-  eventHandler: updateDirection,
+  // eslint-disable-next-line no-return-assign
+  eventHandler: (key) => snake.properties.currentDirection = parseInt(key, 10),
   stopCondition: (key) => key === 'q',
 });
 
+const gameOver = () => {
+  output.drawGameOver();
+}
+
+const run = () => {
+  setTimeout(() => {
+    snake.move({
+      isScore: () => gameManager.isScore(),
+      isGameOver: () => gameManager.isGameOver(),
+      gameOverHandler: () => gameManager.gameOverHandler(),
+      scoreHandler: () =>  gameManager.scoreHandler(),
+    });
+
+    board.updateSnake({ snake });
+    output.drawBoard({ board: board.properties });
+    output.drawScore({ score: gameManager.properties.score });
+
+    const isGameOver = gameManager.properties.status !== 0;
+    return isGameOver ? gameOver() : run();
+  }, 250);
+};
+
 input.listen();
 run();
-
-myEmitter.on('score', () => {
-  console.log('an event occurred!');
-  target.makeTarget();
-  session.score += 1;
-});
