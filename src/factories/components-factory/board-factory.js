@@ -20,6 +20,8 @@ class BoardFactory {
         if (isAvailable) availablePositions.push({ row: i, column: j });
       }
     }
+
+    return availablePositions;
   }
 
   updateTarget({ target }) {
