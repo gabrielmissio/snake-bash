@@ -1,54 +1,46 @@
-const EventEmitter = require('events');
-
-class MyEmitter extends EventEmitter {}
-const myEmitter = new MyEmitter();
-
 const { KeyboardInput } = require('../inputs');
-const { TraditionalBackgroundFactory } = require('../factories/backgroud-factory');
-const { TargetFactory, SnakeFactory } = require('../factories/components-factory');
+const { DevelopmentOutput: output } = require('../outputs');
+const { makeGameManager } = require('./game-manager-factory');
+const { GAMEOVER } = require('../utils/enums/status-enum');
 
-const session = {
-  emitter: myEmitter,
-  target: {},
-  board: [],
-  snake: {},
-  status: 0,
-  score: 0,
+const gameManager = makeGameManager();
+const { board, snake, target } = gameManager.properties;
+
+board.updateSnake({ snake });
+board.updateTarget({ target });
+
+const gameOver = () => output.drawGameOver();
+const nextFrame = () => {
+  snake.move({
+    isScore: () => gameManager.isScore(),
+    isGameOver: () => gameManager.isGameOver(),
+    gameOverHandler: () => gameManager.gameOverHandler(),
+    scoreHandler: () => gameManager.scoreHandler()
+  });
+
+  board.updateSnake({ snake });
+  output.drawBoard({ board: board.properties });
+  output.drawScore({ score: gameManager.properties.score });
 };
 
-const backgroud = new TraditionalBackgroundFactory({ session });
-backgroud.makeBackground({ row: 10, column: 10 });
-
-const target = new TargetFactory({ session });
-target.makeTarget();
-
-const snake = new SnakeFactory({ session });
-snake.makeSnake();
-
+const intervalBetweenFramesInMilliseconds = 200;
 const run = () => {
   setTimeout(() => {
-    snake.move();
-    console.table(session.board);
-    console.log(`SCORE: ${session.score}`);
-
-    if (session.status === 0) run();
-  }, 250);
+    nextFrame();
+    const isGameOver = gameManager.properties.status === GAMEOVER;
+    return isGameOver ? gameOver() : run();
+  }, intervalBetweenFramesInMilliseconds);
 };
 
-const updateDirection = (key) => {
-  session.snake.currentDirection = key;
+const quitGame = (key) => key === 'q';
+const updateSnakeDirection = (key) => {
+  snake.properties.currentDirection = parseInt(key, 10);
 };
 
 const input = new KeyboardInput({
-  eventHandler: updateDirection,
-  stopCondition: (key) => key === 'q',
+  eventHandler: updateSnakeDirection,
+  stopCondition: quitGame
 });
 
 input.listen();
-run();
-
-myEmitter.on('score', () => {
-  console.log('an event occurred!');
-  target.makeTarget();
-  session.score += 1;
-});
+run(intervalBetweenFramesInMilliseconds);
