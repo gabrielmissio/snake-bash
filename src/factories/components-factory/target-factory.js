@@ -5,19 +5,19 @@ class TargetFactory {
     const row = startingPosition.row || 5;
     const column = startingPosition.column || 5;
 
-    this.target = { row, column };
+    this.properties = { row, column };
   }
 
   getCurrentPosition() {
-    return this.target;
+    return this.properties;
   }
 
   getNextPosition({ availablePositions  }) {
     const max = availablePositions.length - 1;
     const randomIndex = GetRandomArbitrary.get({ max, min: 0 });
 
-    this.target = availablePositions[randomIndex];
-    return this.target;
+    this.properties = availablePositions[randomIndex];
+    return this.properties;
   }
 }
 

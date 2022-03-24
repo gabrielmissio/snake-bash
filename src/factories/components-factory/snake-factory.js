@@ -6,14 +6,14 @@ class SnakeFactory {
     const column = startingPosition.column || 2;
     const currentDirection = startingDirection || DirectionsEnum.RIGTH;
     
-    this.snake = {
+    this.properties = {
       currentDirection,
       body: [{ row, column }]
     };
   }
 
   move({ isScore, scoreHandler, isGameOver, gameOverHandler }) {
-    const { body } = this.snake;
+    const { body } = this.properties;
     body.unshift(this.getNextPosition());
 
     if (isGameOver({ snake: this })) return gameOverHandler();
@@ -22,7 +22,7 @@ class SnakeFactory {
   }
 
   getNextPosition() {
-    const { currentDirection } = this.snake;
+    const { currentDirection } = this.properties;
 
     const invalidDirection = !(currentDirection in DirectionsEnum);
     if (invalidDirection) throw new Error('INVALID DIRECTION');
@@ -39,10 +39,7 @@ class SnakeFactory {
   }
 
   getHeadPosition() {
-    const { body } = this.snake;
-    const headPosition = body[0];
-
-    return headPosition;
+    return this.properties.body[0];
   }
 }
 
