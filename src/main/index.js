@@ -37,11 +37,13 @@ const quitGame = (key) => key === 'q';
 const shouldReset = (key) => key === 'r';
 
 const updateSnakeDirection = (key) => {
-  if (shouldReset(key)) gameManager = makeGameManager();
+  if (shouldReset(key)) {
+    gameManager.reset();
+    run();
+  }
 
   const allowedValues = Object.values(DirectionsEnum);
   const isValidDirection = allowedValues.includes(parseInt(key, 10));
-  
   if (isValidDirection) snake.properties.currentDirection = parseInt(key, 10);  
 };
 
@@ -51,4 +53,4 @@ const input = new KeyboardInput({
 });
 
 input.listen();
-run(intervalBetweenFramesInMilliseconds);
+run();

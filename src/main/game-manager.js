@@ -1,5 +1,6 @@
 const {
   CostumesEnum: { BRICK, SNAKE, TARGET },
+  DirectionsEnum: { RIGTH },
   StatusEnum: { GAMEOVER, RUNNING }
 } = require('../utils/enums');
 
@@ -43,6 +44,16 @@ class GameManager {
     board.updateTarget({ target });
 
     this.properties.score += 1;
+  }
+
+  reset() {
+    const { board, snake, target } = this.properties;
+    board.setToInitialState();
+    snake.setToInitialState();
+    board.updateTarget({ target });
+
+    this.properties.status = RUNNING;
+    this.properties.score = 0;
   }
 }
 
