@@ -44,7 +44,7 @@ const updateSnakeDirection = (key) => {
 
   const allowedValues = Object.values(DirectionsEnum);
   const isValidDirection = allowedValues.includes(parseInt(key, 10));
-  if (isValidDirection) snake.properties.currentDirection = parseInt(key, 10);  
+  if (isValidDirection) snake.properties.currentDirection = parseInt(key, 10);
 };
 
 const input = new KeyboardInput({
