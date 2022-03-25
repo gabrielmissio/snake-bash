@@ -4,10 +4,18 @@ const {
 
 class Board {
   constructor({ background, boardSize }) {
-    const row = (boardSize && boardSize.row) || 15;
-    const column = (boardSize && boardSize.column) || 15;
+    this.row = (boardSize && boardSize.row) || 15;
+    this.column = (boardSize && boardSize.column) || 15;
+    this.background = background;
 
-    this.properties = background.makeBackground({ row, column });
+    this.setToInitialState();
+  }
+
+  setToInitialState() {
+    this.properties = this.background.makeBackground({
+      row: this.row,
+      column: this.column
+    });
   }
 
   getAvailablePositions() {
