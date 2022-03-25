@@ -34,7 +34,11 @@ const run = () => {
 };
 
 const quitGame = (key) => key === 'q';
+const shouldReset = (key) => key === 'r';
+
 const updateSnakeDirection = (key) => {
+  if (shouldReset(key)) gameManager = makeGameManager();
+
   const allowedValues = Object.values(DirectionsEnum);
   const isValidDirection = allowedValues.includes(parseInt(key, 10));
   

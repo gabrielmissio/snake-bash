@@ -2,13 +2,17 @@ const { DirectionsEnum } = require('../utils/enums');
 
 class Snake {
   constructor({ startingPosition, startingDirection } = {}) {
-    const row = (startingPosition && startingPosition.row) || 2;
-    const column = (startingPosition && startingPosition.column) || 2;
-    const currentDirection = startingDirection || DirectionsEnum.RIGTH;
+    this.row = (startingPosition && startingPosition.row) || 2;
+    this.column = (startingPosition && startingPosition.column) || 2;
+    this.currentDirection = startingDirection || DirectionsEnum.RIGTH;
 
+    this.setToInitialState();
+  }
+
+  setToInitialState() {
     this.properties = {
-      currentDirection,
-      body: [{ row, column }]
+      currentDirection: this.currentDirection,
+      body: [{ row: this.row, column: this.column }]
     };
   }
 
