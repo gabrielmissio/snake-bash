@@ -1,7 +1,8 @@
 const { KeyboardInput } = require('../inputs');
 const { MainOutput: output } = require('../outputs');
-const { makeGameManager } = require('./game-manager-factory');
+const { DirectionsEnum } = require('../utils/enums');
 const { GAMEOVER } = require('../utils/enums/status-enum');
+const { makeGameManager } = require('./game-manager-factory');
 
 const gameManager = makeGameManager();
 const { board, snake, target } = gameManager.properties;
@@ -23,7 +24,7 @@ const nextFrame = () => {
   output.drawScore({ score: gameManager.properties.score });
 };
 
-const intervalBetweenFramesInMilliseconds = 200;
+const intervalBetweenFramesInMilliseconds = 100;
 const run = () => {
   setTimeout(() => {
     nextFrame();
@@ -34,7 +35,10 @@ const run = () => {
 
 const quitGame = (key) => key === 'q';
 const updateSnakeDirection = (key) => {
-  snake.properties.currentDirection = parseInt(key, 10);
+  const allowedValues = Object.values(DirectionsEnum);
+  const isValidDirection = allowedValues.includes(parseInt(key, 10));
+  
+  if (isValidDirection) snake.properties.currentDirection = parseInt(key, 10);  
 };
 
 const input = new KeyboardInput({
