@@ -1,8 +1,11 @@
+const Outputs = require('../outputs');
 const { KeyboardInput } = require('../inputs');
-const { MainOutput: output } = require('../outputs');
 const { DirectionsEnum } = require('../utils/enums');
 const { GAMEOVER } = require('../utils/enums/status-enum');
 const { makeGameManager } = require('./game-manager-factory');
+
+const outputMode = process.env.OUTPUT_MODE || 'MainOutput';
+const output = Outputs[outputMode];
 
 const gameManager = makeGameManager();
 const { board, snake, target } = gameManager.properties;
