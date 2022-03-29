@@ -11,11 +11,16 @@ class MainOutput {
   }
 
   static drawScore({ score }) {
-    process.stdout.write(`SCORE: ${score}\n`);
+    process.stdout.write(` SCORE: ${score}\n`);
   }
 
   static drawGameOver() {
-    process.stdout.write('GAME OVER');
+    process.stdout.write(' * * * * * GAME OVER * * * * *');
+  }
+
+  static drawInstructions({ quitKey, restartKey }) {
+    process.stdout.write(` Press "${quitKey}" to quit\n`);
+    process.stdout.write(` Press "${restartKey}" to restart\n\n`);
   }
 
   static clear() {

@@ -16,6 +16,8 @@ board.updateTarget({ target });
 const gameOver = () => output.drawGameOver();
 const nextFrame = () => {
   output.clear();
+  output.drawInstructions({ quitKey: 'q', restartKey: 'r' });
+  output.drawScore({ score: gameManager.properties.score });
 
   snake.move({
     isScore: () => gameManager.isScore(),
@@ -26,7 +28,6 @@ const nextFrame = () => {
 
   board.updateSnake({ snake });
   output.drawBoard({ board: board.properties });
-  output.drawScore({ score: gameManager.properties.score });
 };
 
 const intervalBetweenFramesInMilliseconds = 120;
