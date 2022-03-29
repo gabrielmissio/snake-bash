@@ -1,6 +1,5 @@
 const {
   CostumesEnum: { BRICK, SNAKE, TARGET },
-  DirectionsEnum: { RIGTH },
   StatusEnum: { GAMEOVER, RUNNING }
 } = require('../utils/enums');
 
