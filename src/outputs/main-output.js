@@ -17,6 +17,10 @@ class MainOutput {
   static drawGameOver() {
     process.stdout.write('GAME OVER');
   }
+
+  static clear() {
+    console.clear();
+  }
 }
 
 module.exports = MainOutput;

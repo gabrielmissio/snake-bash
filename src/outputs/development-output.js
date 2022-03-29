@@ -10,6 +10,10 @@ class DevelopmentOutput {
   static drawGameOver() {
     console.log('GAME OVER');
   }
+
+  static clear() {
+    console.clear();
+  }
 }
 
 module.exports = DevelopmentOutput;
