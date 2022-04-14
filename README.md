@@ -1,4 +1,9 @@
+
+
 # snake-terminal-nodejs
+
+## gameplay
+![](public/gameplay.gif)
 
 ## how to play
 
