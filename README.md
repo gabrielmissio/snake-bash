@@ -19,13 +19,11 @@ node src/main
 ### commands
 
 ```properties
-directions
 4 -> left
 6 -> right
 8 -> up
 2 -> down
 
-options
 q -> quit
 r -> restart
 ```
