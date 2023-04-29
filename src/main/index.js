@@ -1,3 +1,5 @@
+#!/usr/bin/env node
+
 const Outputs = require('../outputs')
 const { KeyboardInput } = require('../inputs')
 const { DirectionsEnum } = require('../utils/enums')

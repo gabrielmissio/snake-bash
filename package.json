@@ -1,11 +1,14 @@
 {
   "name": "snake-bash",
-  "version": "1.0.0",
+  "version": "1.0.3",
   "description": "The Snake Bash is a classic arcade-style game that you can play directly from your terminal.",
   "main": "src/main/index.js",
+  "bin": {
+    "snake-bash": "src/main/index.js"
+  },
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
-    "start": "node src/main"
+    "start": "node src/main/index.js"
   },
   "author": "Gabriel Missio",
   "license": "MIT License",
