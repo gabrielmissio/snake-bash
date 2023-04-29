@@ -3,6 +3,6 @@ const DirectionsEnum = {
   LEFT: 4,
   DOWN: 2,
   UP: 8
-};
+}
 
-module.exports = Object.freeze(DirectionsEnum);
+module.exports = Object.freeze(DirectionsEnum)

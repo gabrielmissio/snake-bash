@@ -1,65 +1,65 @@
 const {
   CostumesEnum: { SNAKE, TARGET, EMPITY }
-} = require('../utils/enums');
+} = require('../utils/enums')
 
 class Board {
-  constructor({ background, boardSize }) {
-    this.row = (boardSize && boardSize.row) || 15;
-    this.column = (boardSize && boardSize.column) || 15;
-    this.background = background;
+  constructor ({ background, boardSize }) {
+    this.row = (boardSize && boardSize.row) || 15
+    this.column = (boardSize && boardSize.column) || 15
+    this.background = background
 
-    this.setToInitialState();
+    this.setToInitialState()
   }
 
-  setToInitialState() {
+  setToInitialState () {
     this.properties = this.background.makeBackground({
       row: this.row,
       column: this.column
-    });
+    })
   }
 
-  getAvailablePositions() {
-    const availablePositions = [];
-    const rowSize = this.properties.length;
+  getAvailablePositions () {
+    const availablePositions = []
+    const rowSize = this.properties.length
 
     for (let i = 0; i < rowSize; i++) {
-      const columnSize = this.properties[i].length;
+      const columnSize = this.properties[i].length
 
       for (let j = 0; j < columnSize; j++) {
-        const isAvailable = this.properties[i][j] === EMPITY;
-        if (isAvailable) availablePositions.push({ row: i, column: j });
+        const isAvailable = this.properties[i][j] === EMPITY
+        if (isAvailable) availablePositions.push({ row: i, column: j })
       }
     }
 
-    return availablePositions;
+    return availablePositions
   }
 
-  updateTarget({ target }) {
-    const { row, column } = target.getCurrentPosition();
-    this.properties[row][column] = TARGET;
+  updateTarget ({ target }) {
+    const { row, column } = target.getCurrentPosition()
+    this.properties[row][column] = TARGET
   }
 
-  updateSnake({ snake }) {
-    this.clearSnakeFragments();
+  updateSnake ({ snake }) {
+    this.clearSnakeFragments()
 
-    const { body } = snake.properties;
+    const { body } = snake.properties
     for (let i = 0; i < body.length; i++) {
-      this.properties[body[i].row][body[i].column] = SNAKE;
+      this.properties[body[i].row][body[i].column] = SNAKE
     }
   }
 
-  clearSnakeFragments() {
-    const rowSize = this.properties.length;
+  clearSnakeFragments () {
+    const rowSize = this.properties.length
 
     for (let i = 0; i < rowSize; i++) {
-      const columnSize = this.properties[i].length;
+      const columnSize = this.properties[i].length
 
       for (let j = 0; j < columnSize; j++) {
-        const isSnakeFragment = this.properties[i][j] === SNAKE;
-        if (isSnakeFragment) this.properties[i][j] = EMPITY;
+        const isSnakeFragment = this.properties[i][j] === SNAKE
+        if (isSnakeFragment) this.properties[i][j] = EMPITY
       }
     }
   }
 }
 
-module.exports = Board;
+module.exports = Board

@@ -3,6 +3,6 @@ const CostumesEnum = {
   SNAKE: '*',
   TARGET: '$',
   EMPITY: ' '
-};
+}
 
-module.exports = Object.freeze(CostumesEnum);
+module.exports = Object.freeze(CostumesEnum)

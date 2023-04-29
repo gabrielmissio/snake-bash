@@ -1,5 +1,5 @@
-const TraditionalBackground = require('./traditional-background');
+const TraditionalBackground = require('./traditional-background')
 
 module.exports = {
   TraditionalBackground
-};
+}

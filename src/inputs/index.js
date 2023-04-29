@@ -1,5 +1,5 @@
-const KeyboardInput = require('./keyboard-input');
+const KeyboardInput = require('./keyboard-input')
 
 module.exports = {
   KeyboardInput
-};
+}

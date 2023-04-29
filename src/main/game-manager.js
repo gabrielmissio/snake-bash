@@ -1,59 +1,59 @@
 const {
   CostumesEnum: { BRICK, SNAKE, TARGET },
   StatusEnum: { GAMEOVER, RUNNING }
-} = require('../utils/enums');
+} = require('../utils/enums')
 
 class GameManager {
-  constructor({ board, snake, target } = {}) {
+  constructor ({ board, snake, target } = {}) {
     this.properties = {
       board,
       snake,
       target,
       status: RUNNING,
       score: 0
-    };
+    }
   }
 
-  isScore() {
-    const { snake, board } = this.properties;
-    const { row, column } = snake.getHeadPosition();
+  isScore () {
+    const { snake, board } = this.properties
+    const { row, column } = snake.getHeadPosition()
 
-    return board.properties[row][column] === TARGET;
+    return board.properties[row][column] === TARGET
   }
 
-  isGameOver() {
-    const { snake, board } = this.properties;
-    const { row, column } = snake.getHeadPosition();
+  isGameOver () {
+    const { snake, board } = this.properties
+    const { row, column } = snake.getHeadPosition()
 
-    const hitsBrick = board.properties[row][column] === BRICK;
-    const hitsSnakeBody = board.properties[row][column] === SNAKE;
+    const hitsBrick = board.properties[row][column] === BRICK
+    const hitsSnakeBody = board.properties[row][column] === SNAKE
 
-    return hitsBrick || hitsSnakeBody;
+    return hitsBrick || hitsSnakeBody
   }
 
-  gameOverHandler() {
-    this.properties.status = GAMEOVER;
+  gameOverHandler () {
+    this.properties.status = GAMEOVER
   }
 
-  scoreHandler() {
-    const { board, target } = this.properties;
-    const availablePositions = board.getAvailablePositions();
+  scoreHandler () {
+    const { board, target } = this.properties
+    const availablePositions = board.getAvailablePositions()
 
-    target.getNextPosition({ availablePositions });
-    board.updateTarget({ target });
+    target.getNextPosition({ availablePositions })
+    board.updateTarget({ target })
 
-    this.properties.score += 1;
+    this.properties.score += 1
   }
 
-  reset() {
-    const { board, snake, target } = this.properties;
-    board.setToInitialState();
-    snake.setToInitialState();
-    board.updateTarget({ target });
+  reset () {
+    const { board, snake, target } = this.properties
+    board.setToInitialState()
+    snake.setToInitialState()
+    board.updateTarget({ target })
 
-    this.properties.status = RUNNING;
-    this.properties.score = 0;
+    this.properties.status = RUNNING
+    this.properties.score = 0
   }
 }
 
-module.exports = GameManager;
+module.exports = GameManager
