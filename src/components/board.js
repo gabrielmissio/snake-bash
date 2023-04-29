@@ -26,7 +26,7 @@ class Board {
   }
 
   updateTarget ({ target }) {
-    const { row, column } = target.getCurrentPosition()
+    const { row, column } = target.position
     this.properties[row][column] = TARGET
   }
 
