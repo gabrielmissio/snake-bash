@@ -40,17 +40,19 @@ const run = () => {
 }
 
 const quitGame = (key) => key === 'q'
-const shouldReset = (key) => key === 'r'
 
 const updateSnakeDirection = (key) => {
-  if (shouldReset(key)) {
+  if (key === 'r') {
+    if (gameManager.properties.status === GAMEOVER) run()
     gameManager.reset()
-    run()
   }
 
   const allowedValues = Object.values(DirectionsEnum)
-  const isValidDirection = allowedValues.includes(parseInt(key, 10))
-  if (isValidDirection) snake.properties.currentDirection = parseInt(key, 10)
+  const invalidDirection = !allowedValues.includes(parseInt(key, 10))
+
+  if (invalidDirection) return null
+
+  snake.changeDirection(parseInt(key, 10))
 }
 
 const input = new KeyboardInput({
