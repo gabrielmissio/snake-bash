@@ -4,20 +4,19 @@ const { DirectionsEnum } = require('../utils/enums')
 const { GAMEOVER } = require('../utils/enums/status-enum')
 const { makeGameManager } = require('./game-manager-factory')
 
-const outputMode = process.env.OUTPUT_MODE || 'MainOutput'
+const defaultOutputMode = 'MainOutput'
+const outputMode = process.env.OUTPUT_MODE ?? defaultOutputMode
 const output = Outputs[outputMode]
 
 const gameManager = makeGameManager()
-const { board, snake, target } = gameManager.properties
+const { board, snake } = gameManager.properties
 
-board.updateSnake({ snake })
-board.updateTarget({ target })
-
-const gameOver = () => output.drawGameOver()
-const nextFrame = () => {
+function nextFrame () {
   output.clear()
   output.drawInstructions({ quitKey: 'q', restartKey: 'r' })
-  output.drawScore({ score: gameManager.properties.score })
+
+  const { score } = gameManager.properties
+  output.drawScore({ score })
 
   snake.move({
     isScore: () => gameManager.isScore(),
@@ -28,31 +27,33 @@ const nextFrame = () => {
 
   board.updateSnake({ snake })
   output.drawBoard({ board: board.properties })
+
+  const isGameOver = gameManager.properties.status === GAMEOVER
+  return isGameOver ? output.drawGameOver() : run()
 }
 
 const intervalBetweenFramesInMilliseconds = 120
-const run = () => {
-  setTimeout(() => {
-    nextFrame()
-    const isGameOver = gameManager.properties.status === GAMEOVER
-    return isGameOver ? gameOver() : run()
-  }, intervalBetweenFramesInMilliseconds)
+
+function run () {
+  setTimeout(nextFrame, intervalBetweenFramesInMilliseconds)
 }
 
-const quitGame = (key) => key === 'q'
+function quitGame (key) {
+  return key === 'q'
+}
 
-const updateSnakeDirection = (key) => {
-  if (key === 'r') {
-    if (gameManager.properties.status === GAMEOVER) run()
-    gameManager.reset()
-  }
+function resetGame () {
+  const isGameOverStatus = gameManager.properties.status === GAMEOVER
+  if (isGameOverStatus) run()
 
-  const allowedValues = Object.values(DirectionsEnum)
-  const invalidDirection = !allowedValues.includes(parseInt(key, 10))
+  gameManager.reset()
+}
 
-  if (invalidDirection) return null
+function updateSnakeDirection (key) {
+  if (key === 'r') resetGame()
 
-  snake.changeDirection(parseInt(key, 10))
+  const allowedKey = Object.values(DirectionsEnum).includes(parseInt(key, 10))
+  if (allowedKey) return snake.changeDirection(parseInt(key, 10))
 }
 
 const input = new KeyboardInput({
