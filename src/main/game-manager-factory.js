@@ -8,6 +8,9 @@ class GameManagerFactory {
     const snake = new Snake()
     const target = new Target()
 
+    board.updateSnake({ snake })
+    board.updateTarget({ target })
+
     return new GameManager({ board, snake, target })
   }
 }

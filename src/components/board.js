@@ -3,60 +3,45 @@ const {
 } = require('../utils/enums')
 
 class Board {
-  constructor ({ background, boardSize }) {
-    this.row = (boardSize && boardSize.row) || 15
-    this.column = (boardSize && boardSize.column) || 15
+  constructor ({ background, boardSize = { row: 15, column: 15 } }) {
+    this.row = boardSize.row
+    this.column = boardSize.column
     this.background = background
 
     this.setToInitialState()
   }
 
   setToInitialState () {
-    this.properties = this.background.makeBackground({
-      row: this.row,
-      column: this.column
-    })
+    const { row, column } = this
+    this.properties = this.background.makeBackground({ row, column })
   }
 
   getAvailablePositions () {
-    const availablePositions = []
-    const rowSize = this.properties.length
-
-    for (let i = 0; i < rowSize; i++) {
-      const columnSize = this.properties[i].length
-
-      for (let j = 0; j < columnSize; j++) {
-        const isAvailable = this.properties[i][j] === EMPITY
-        if (isAvailable) availablePositions.push({ row: i, column: j })
-      }
-    }
-
-    return availablePositions
+    return this.properties.flatMap((row, rowIndex) => {
+      return row.map((column, columnIndex) => column === EMPITY
+        ? { row: rowIndex, column: columnIndex }
+        : null
+      ).filter(Boolean)
+    })
   }
 
   updateTarget ({ target }) {
-    const { row, column } = target.getCurrentPosition()
+    const { row, column } = target.position
     this.properties[row][column] = TARGET
   }
 
   updateSnake ({ snake }) {
     this.clearSnakeFragments()
 
-    const { body } = snake.properties
-    for (let i = 0; i < body.length; i++) {
-      this.properties[body[i].row][body[i].column] = SNAKE
+    for (const { row, column } of snake.properties.body) {
+      this.properties[row][column] = SNAKE
     }
   }
 
   clearSnakeFragments () {
-    const rowSize = this.properties.length
-
-    for (let i = 0; i < rowSize; i++) {
-      const columnSize = this.properties[i].length
-
-      for (let j = 0; j < columnSize; j++) {
-        const isSnakeFragment = this.properties[i][j] === SNAKE
-        if (isSnakeFragment) this.properties[i][j] = EMPITY
+    for (const row of this.properties) {
+      for (let j = 0; j < row.length; j++) {
+        if (row[j] === SNAKE) row[j] = EMPITY
       }
     }
   }

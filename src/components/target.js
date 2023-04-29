@@ -1,23 +1,18 @@
 const { GetRandomArbitrary } = require('../utils/helpers')
 
 class Target {
-  constructor ({ startingPosition } = {}) {
-    const row = (startingPosition && startingPosition.row) || 5
-    const column = (startingPosition && startingPosition.column) || 5
-
-    this.properties = { row, column }
-  }
-
-  getCurrentPosition () {
-    return this.properties
+  constructor ({ startingPosition = { row: 5, column: 5 } } = {}) {
+    this.position = startingPosition
   }
 
   getNextPosition ({ availablePositions }) {
-    const max = availablePositions.length - 1
-    const randomIndex = GetRandomArbitrary.get({ max, min: 0 })
+    const randomIndex = GetRandomArbitrary.get({
+      max: availablePositions.length - 1,
+      min: 0
+    })
 
-    this.properties = availablePositions[randomIndex]
-    return this.properties
+    this.position = availablePositions[randomIndex]
+    return this.position
   }
 }
 

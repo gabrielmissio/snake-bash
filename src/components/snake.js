@@ -16,6 +16,20 @@ class Snake {
     }
   }
 
+  changeDirection (newDirection) {
+    const { currentDirection } = this.properties
+    const oppositeDirections = {
+      [DirectionsEnum.RIGTH]: DirectionsEnum.LEFT,
+      [DirectionsEnum.LEFT]: DirectionsEnum.RIGTH,
+      [DirectionsEnum.DOWN]: DirectionsEnum.UP,
+      [DirectionsEnum.UP]: DirectionsEnum.DOWN
+    }
+
+    if (newDirection !== oppositeDirections[currentDirection]) {
+      this.properties.currentDirection = newDirection
+    }
+  }
+
   move ({
     isScore, scoreHandler, isGameOver, gameOverHandler
   } = {}) {

@@ -15,7 +15,7 @@ class MainOutput {
   }
 
   static drawGameOver () {
-    process.stdout.write(' * * * * * GAME OVER * * * * *')
+    process.stdout.write('\n * * * * * GAME OVER * * * * *')
   }
 
   static drawInstructions ({ quitKey, restartKey }) {
