@@ -1,6 +1,6 @@
 {
   "name": "snake-bash",
-  "version": "1.0.3",
+  "version": "1.1.0",
   "description": "The Snake Bash is a classic arcade-style game that you can play directly from your terminal.",
   "main": "src/main/index.js",
   "bin": {
