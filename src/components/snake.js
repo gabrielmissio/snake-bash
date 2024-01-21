@@ -4,7 +4,7 @@ class Snake {
   constructor ({ startingPosition, startingDirection } = {}) {
     this.row = (startingPosition && startingPosition.row) || 2
     this.column = (startingPosition && startingPosition.column) || 2
-    this.currentDirection = startingDirection || DirectionsEnum.RIGTH
+    this.currentDirection = startingDirection || DirectionsEnum.RIGHT
 
     this.setToInitialState()
   }
@@ -19,8 +19,8 @@ class Snake {
   changeDirection (newDirection) {
     const { currentDirection } = this.properties
     const oppositeDirections = {
-      [DirectionsEnum.RIGTH]: DirectionsEnum.LEFT,
-      [DirectionsEnum.LEFT]: DirectionsEnum.RIGTH,
+      [DirectionsEnum.RIGHT]: DirectionsEnum.LEFT,
+      [DirectionsEnum.LEFT]: DirectionsEnum.RIGHT,
       [DirectionsEnum.DOWN]: DirectionsEnum.UP,
       [DirectionsEnum.UP]: DirectionsEnum.DOWN
     }
@@ -50,7 +50,7 @@ class Snake {
 
     const currentHeadPosition = this.getHeadPosition()
     const options = {
-      [DirectionsEnum.RIGTH]: { row: currentHeadPosition.row, column: currentHeadPosition.column + 1 },
+      [DirectionsEnum.RIGHT]: { row: currentHeadPosition.row, column: currentHeadPosition.column + 1 },
       [DirectionsEnum.LEFT]: { row: currentHeadPosition.row, column: currentHeadPosition.column - 1 },
       [DirectionsEnum.DOWN]: { row: currentHeadPosition.row + 1, column: currentHeadPosition.column },
       [DirectionsEnum.UP]: { row: currentHeadPosition.row - 1, column: currentHeadPosition.column }

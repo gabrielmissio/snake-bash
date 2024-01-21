@@ -55,7 +55,7 @@ function parseInput (key) {
   const arrowKeys = {
     '\u001B[A': DirectionsEnum.UP,
     '\u001B[B': DirectionsEnum.DOWN,
-    '\u001B[C': DirectionsEnum.RIGTH,
+    '\u001B[C': DirectionsEnum.RIGHT,
     '\u001B[D': DirectionsEnum.LEFT
   }
 

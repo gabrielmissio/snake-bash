@@ -1,5 +1,5 @@
 const DirectionsEnum = {
-  RIGTH: 6,
+  RIGHT: 6,
   LEFT: 4,
   DOWN: 2,
   UP: 8
