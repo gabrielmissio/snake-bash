@@ -2,7 +2,7 @@ const CostumesEnum = {
   BRICK: '#',
   SNAKE: '*',
   TARGET: '$',
-  EMPITY: ' '
+  EMPTY: ' '
 }
 
 module.exports = Object.freeze(CostumesEnum)

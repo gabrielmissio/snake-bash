@@ -1,5 +1,5 @@
 const {
-  CostumesEnum: { BRICK, EMPITY }
+  CostumesEnum: { BRICK, EMPTY }
 } = require('../utils/enums')
 
 class TraditionalBackground {
@@ -13,7 +13,7 @@ class TraditionalBackground {
         const isBoarderRightAndDown = i === row - 1 || j === column - 1
 
         const isBorder = isBoarderLeftAndUp || isBoarderRightAndDown
-        const componentToPush = isBorder ? BRICK : EMPITY
+        const componentToPush = isBorder ? BRICK : EMPTY
 
         backgroud[i].push(componentToPush)
       }

@@ -1,5 +1,5 @@
 const {
-  CostumesEnum: { SNAKE, TARGET, EMPITY }
+  CostumesEnum: { SNAKE, TARGET, EMPTY }
 } = require('../utils/enums')
 
 class Board {
@@ -18,7 +18,7 @@ class Board {
 
   getAvailablePositions () {
     return this.properties.flatMap((row, rowIndex) => {
-      return row.map((column, columnIndex) => column === EMPITY
+      return row.map((column, columnIndex) => column === EMPTY
         ? { row: rowIndex, column: columnIndex }
         : null
       ).filter(Boolean)
@@ -41,7 +41,7 @@ class Board {
   clearSnakeFragments () {
     for (const row of this.properties) {
       for (let j = 0; j < row.length; j++) {
-        if (row[j] === SNAKE) row[j] = EMPITY
+        if (row[j] === SNAKE) row[j] = EMPTY
       }
     }
   }

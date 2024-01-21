@@ -51,11 +51,23 @@ function resetGame () {
   gameManager.reset()
 }
 
+function parseInput (key) {
+  const arrowKeys = {
+    '\u001B[A': DirectionsEnum.UP,
+    '\u001B[B': DirectionsEnum.DOWN,
+    '\u001B[C': DirectionsEnum.RIGHT,
+    '\u001B[D': DirectionsEnum.LEFT
+  }
+
+  return arrowKeys[key] ?? parseInt(key, 10)
+}
+
 function updateSnakeDirection (key) {
   if (key === 'r') resetGame()
+  const parsedKey = parseInput(key)
 
-  const allowedKey = Object.values(DirectionsEnum).includes(parseInt(key, 10))
-  if (allowedKey) return snake.changeDirection(parseInt(key, 10))
+  const allowedKey = Object.values(DirectionsEnum).includes(parsedKey)
+  if (allowedKey) return snake.changeDirection(parsedKey)
 }
 
 const input = new KeyboardInput({
