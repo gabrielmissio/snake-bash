@@ -13,10 +13,13 @@ const output = Outputs[outputMode]
 const gameManager = makeGameManager()
 const { board, snake } = gameManager.properties
 
+let snakeFrameDirection = snake.currentDirection
+
 function nextFrame () {
   output.clear()
   output.drawInstructions({ quitKey: 'q', restartKey: 'r' })
 
+  snake.changeDirection(snakeFrameDirection)
   const { score } = gameManager.properties
   output.drawScore({ score })
 
@@ -49,6 +52,7 @@ function resetGame () {
   if (isGameOverStatus) run()
 
   gameManager.reset()
+  snakeFrameDirection = snake.currentDirection
 }
 
 function parseInput (key) {
@@ -67,7 +71,9 @@ function updateSnakeDirection (key) {
   const parsedKey = parseInput(key)
 
   const allowedKey = Object.values(DirectionsEnum).includes(parsedKey)
-  if (allowedKey) return snake.changeDirection(parsedKey)
+  if (!allowedKey) return
+
+  snakeFrameDirection = parsedKey
 }
 
 const input = new KeyboardInput({
