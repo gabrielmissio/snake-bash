@@ -3,7 +3,7 @@
 const Outputs = require('../outputs')
 const { KeyboardInput } = require('../inputs')
 const { DirectionsEnum } = require('../utils/enums')
-const { GAMEOVER } = require('../utils/enums/status-enum')
+const { RUNNING, GAMEOVER } = require('../utils/enums/status-enum')
 const { makeGameManager } = require('./game-manager-factory')
 
 const defaultOutputMode = 'MainOutput'
@@ -14,30 +14,39 @@ const gameManager = makeGameManager()
 const { board, snake } = gameManager.properties
 
 let snakeFrameDirection = snake.currentDirection
+let intervalBetweenFramesInMilliseconds = 100
 
 function nextFrame () {
-  output.clear()
-  output.drawInstructions({ quitKey: 'q', restartKey: 'r' })
-
   snake.changeDirection(snakeFrameDirection)
-  const { score } = gameManager.properties
-  output.drawScore({ score })
-
   snake.move({
     isScore: () => gameManager.isScore(),
     isGameOver: () => gameManager.isGameOver(),
     gameOverHandler: () => gameManager.gameOverHandler(),
     scoreHandler: () => gameManager.scoreHandler()
   })
-
   board.updateSnake({ snake })
-  output.drawBoard({ board: board.properties })
 
-  const isGameOver = gameManager.properties.status === GAMEOVER
-  return isGameOver ? output.drawGameOver() : run()
+  drawFrameState()
+
+  if (gameManager.properties.status === RUNNING) {
+    run()
+  }
 }
 
-const intervalBetweenFramesInMilliseconds = 120
+function drawFrameState () {
+  output.clear()
+
+  output.drawInstructions({ quitKey: 'q', restartKey: 'r' })
+  output.drawGameplayInfo({
+    score: gameManager.properties.score,
+    framesPerSecond: (1000 / intervalBetweenFramesInMilliseconds).toFixed(2),
+  })
+  output.drawBoard({ board: board.properties })
+
+  if (gameManager.properties.status === GAMEOVER) {
+    output.drawGameOver()
+  }
+}
 
 function run () {
   setTimeout(nextFrame, intervalBetweenFramesInMilliseconds)
@@ -67,13 +76,24 @@ function parseInput (key) {
 }
 
 function updateSnakeDirection (key) {
-  if (key === 'r') resetGame()
+  if (key === '+') {
+    if (intervalBetweenFramesInMilliseconds > 0) {
+      intervalBetweenFramesInMilliseconds -= 10
+    }
+    if (gameManager.properties.status === GAMEOVER) drawFrameState()
+  } else if (key === '-') {
+    intervalBetweenFramesInMilliseconds += 10
+    if (gameManager.properties.status === GAMEOVER) drawFrameState()
+  } else if (key === 'r') {
+    resetGame()
+  }
+
   const parsedKey = parseInput(key)
-
   const allowedKey = Object.values(DirectionsEnum).includes(parsedKey)
-  if (!allowedKey) return
 
-  snakeFrameDirection = parsedKey
+  if (allowedKey) {
+    snakeFrameDirection = parsedKey
+  }
 }
 
 const input = new KeyboardInput({

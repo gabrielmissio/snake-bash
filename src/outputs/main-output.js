@@ -10,8 +10,9 @@ class MainOutput {
     }
   }
 
-  static drawScore ({ score }) {
-    process.stdout.write(` SCORE: ${score}\n`)
+  static drawGameplayInfo ({ score, framesPerSecond }) {
+    process.stdout.write(` SCORE: ${score}`)
+    process.stdout.write(` | FPS: ${framesPerSecond}\n`)
   }
 
   static drawGameOver () {
@@ -20,7 +21,9 @@ class MainOutput {
 
   static drawInstructions ({ quitKey, restartKey }) {
     process.stdout.write(` Press "${quitKey}" to quit\n`)
-    process.stdout.write(` Press "${restartKey}" to restart\n\n`)
+    process.stdout.write(` Press "${restartKey}" to restart\n`)
+    process.stdout.write(' Press "+" to increase the snake\'s speed\n')
+    process.stdout.write(' Press "-" to decrease the snake\'s speed\n\n')
   }
 
   static clear () {

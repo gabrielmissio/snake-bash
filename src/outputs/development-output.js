@@ -3,8 +3,8 @@ class DevelopmentOutput {
     console.table(board)
   }
 
-  static drawScore ({ score }) {
-    console.log(score)
+  static drawGameplayInfo ({ score, framesPerSecond }) {
+    console.log({ score, framesPerSecond })
   }
 
   static drawGameOver () {
