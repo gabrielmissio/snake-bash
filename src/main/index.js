@@ -39,7 +39,7 @@ function drawFrameState () {
   output.drawInstructions({ quitKey: 'q', restartKey: 'r' })
   output.drawGameplayInfo({
     score: gameManager.properties.score,
-    framesPerSecond: (1000 / intervalBetweenFramesInMilliseconds).toFixed(2),
+    framesPerSecond: (1000 / intervalBetweenFramesInMilliseconds).toFixed(2)
   })
   output.drawBoard({ board: board.properties })
 

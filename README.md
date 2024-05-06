@@ -2,6 +2,8 @@
 
 The Snake Bash Game is a classic arcade-style game that you can play directly from your terminal.
 
+![Alt Text](./media/snake-bash-gameplay.gif)
+
 ## How to play
 
 To start the game, run the following command in your terminal:
