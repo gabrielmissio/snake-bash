@@ -79,3 +79,10 @@ test('Board places the target on the grid', () => {
 
   assert.strictEqual(board.getCostumeAt({ row: 4, column: 4 }), TARGET)
 })
+
+test('Board ignores a target outside the grid', () => {
+  const board = makeBoard()
+
+  assert.doesNotThrow(() => board.updateTarget({ target: { position: { row: 99, column: 99 } } }))
+  assert.doesNotThrow(() => board.updateTarget({ target: { position: { row: -1, column: 0 } } }))
+})

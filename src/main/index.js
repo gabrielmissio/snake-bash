@@ -187,9 +187,12 @@ class Game {
     process.on('SIGTERM', () => this.shutdown(0))
     process.on('SIGHUP', () => this.shutdown(0))
 
-    // Without this a crash would leave the user staring at the alternate screen
-    // with a hidden cursor and a terminal still in raw mode.
+    // Without these a crash would leave the user staring at the alternate
+    // screen with a hidden cursor and a terminal still in raw mode. The game
+    // is synchronous today, so unhandledRejection is there to keep that true
+    // for whatever gets added later.
     process.on('uncaughtException', (error) => this.shutdown(1, error))
+    process.on('unhandledRejection', (error) => this.shutdown(1, error))
   }
 
   shutdown (exitCode = 0, error = null) {
