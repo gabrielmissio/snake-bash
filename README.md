@@ -58,6 +58,11 @@ snake-bash --help
 Colours are also disabled automatically when the output is not a terminal, or
 when `NO_COLOR` is set.
 
+The best score lasts for as long as the game is running and is deliberately
+never written to disk. Snake Bash reads no files, writes no files, opens no
+sockets and has no runtime dependencies, which is what makes it safe to drop
+onto a machine you care about and delete afterwards.
+
 ## How it renders
 
 Terminals flicker when a game blanks the screen and repaints it from scratch on

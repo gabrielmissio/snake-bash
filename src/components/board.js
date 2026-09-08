@@ -38,6 +38,10 @@ class Board {
   updateTarget ({ target }) {
     if (!target.position) return
 
+    // getCostumeAt already guards its reads. Without the same guard here a
+    // stray position is a TypeError rather than a no-op.
+    if (!this.isInside(target.position)) return
+
     const { row, column } = target.position
     this.properties[row][column] = TARGET
   }

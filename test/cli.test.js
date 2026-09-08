@@ -68,3 +68,36 @@ test('Cli help text lists the controls', () => {
     assert.ok(help.includes(fragment), `help should mention ${fragment}`)
   }
 })
+
+test('Cli rejects a board too large to allocate', () => {
+  const { MAX } = Cli.SIZE_LIMITS
+
+  assert.throws(() => Cli.parseSize(String(MAX + 1)), /maximum is 200/)
+  assert.throws(() => Cli.parseSize(`10x${MAX + 1}`), /maximum is 200/)
+  assert.throws(() => Cli.parseSize('4294967295'), /maximum is 200/)
+  assert.doesNotThrow(() => Cli.parseSize(String(MAX)))
+})
+
+test('Cli rejects a stray argument instead of ignoring it', () => {
+  assert.throws(() => Cli.parse(['20']), /Unexpected argument: 20/)
+  assert.throws(() => Cli.parse(['jogar']), /Unexpected argument: jogar/)
+})
+
+test('Cli points a bare size at the flag that would have worked', () => {
+  assert.throws(() => Cli.parse(['20']), /did you mean "--size 20"/)
+  assert.throws(() => Cli.parse(['20x30']), /did you mean "--size 20x30"/)
+  // Only worth suggesting when the argument actually looks like a size.
+  assert.throws(() => Cli.parse(['jogar']), (error) => !error.message.includes('did you mean'))
+})
+
+test('Cli neutralises control characters before echoing an argument back', () => {
+  const escape = String.fromCharCode(27)
+
+  for (const argv of [[`--${escape}]0;title`], [`${escape}[31m`], ['--size', `9${escape}x`]]) {
+    assert.throws(() => Cli.parse(argv), (error) => {
+      assert.ok(!error.message.includes(escape), 'escape must not survive into the message')
+      assert.ok(error.message.includes('\\x1b'), 'escape should be shown as text')
+      return true
+    })
+  }
+})
