@@ -89,7 +89,16 @@ test('GameLoop never waits longer than one interval', () => {
   const loop = new GameLoop({ getInterval: () => 30, now: clock.now, onTick: () => {} })
 
   const realSetTimeout = global.setTimeout
-  global.setTimeout = (fn, delay) => { delays.push(delay); return realSetTimeout(fn, 10000) }
+  const pending = []
+
+  // Record the delay the loop asked for, but never let a real long timer exist:
+  // an orphaned one would hold the process open until it fired.
+  global.setTimeout = (fn, delay) => {
+    delays.push(delay)
+    const handle = realSetTimeout(() => {}, 0)
+    pending.push(handle)
+    return handle
+  }
 
   try {
     loop.start()
@@ -98,6 +107,7 @@ test('GameLoop never waits longer than one interval', () => {
   } finally {
     global.setTimeout = realSetTimeout
     loop.stop()
+    pending.forEach((handle) => clearTimeout(handle))
   }
 
   assert.ok(delays.every((delay) => delay <= 30), `unbounded delay scheduled: ${delays}`)
