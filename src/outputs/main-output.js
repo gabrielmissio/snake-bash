@@ -27,14 +27,21 @@ class MainOutput {
   }
 
   /** A board wider or taller than the window would wrap into visual noise. */
-  getFitError ({ board }) {
-    if (!this.terminal || !this.terminal.interactive) return null
+  fits ({ board }) {
+    if (!this.terminal || !this.terminal.interactive) return true
 
+    const { rows, columns } = this.terminal.size
+
+    return rows >= board.length + 9 && columns >= board[0].length * 2 + 2
+  }
+
+  getFitError (state) {
+    if (this.fits(state)) return null
+
+    const { board } = state
     const { rows, columns } = this.terminal.size
     const requiredRows = board.length + 9
     const requiredColumns = board[0].length * 2 + 2
-
-    if (rows >= requiredRows && columns >= requiredColumns) return null
 
     return [
       '',

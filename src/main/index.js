@@ -11,7 +11,7 @@ const { makeGameManager } = require('./game-manager-factory')
 const { RUNNING, PAUSED } = StatusEnum
 const { MIN_INTERVAL, MAX_INTERVAL, STEP } = Cli.SPEED_LIMITS
 
-const DIRECTION_KEYS = {
+const DIRECTION_KEYS = Object.assign(Object.create(null), {
   [KeyCodes.ARROW_UP]: DirectionsEnum.UP,
   [KeyCodes.ARROW_DOWN]: DirectionsEnum.DOWN,
   [KeyCodes.ARROW_RIGHT]: DirectionsEnum.RIGHT,
@@ -24,7 +24,7 @@ const DIRECTION_KEYS = {
   2: DirectionsEnum.DOWN,
   6: DirectionsEnum.RIGHT,
   4: DirectionsEnum.LEFT
-}
+})
 
 function main (argv) {
   let options
@@ -98,6 +98,10 @@ class Game {
   tick () {
     const { snake, board } = this.gameManager.properties
 
+    // Advancing behind the "terminal too small" notice would kill the snake
+    // somewhere the player cannot see. Hold the world still until it fits.
+    if (!this.canShowBoard()) return this.draw()
+
     snake.applyQueuedDirection()
     snake.move({
       isScore: () => this.gameManager.isScore(),
@@ -110,6 +114,12 @@ class Game {
     this.draw()
 
     if (this.gameManager.properties.status !== RUNNING) this.loop.stop()
+  }
+
+  canShowBoard () {
+    if (typeof this.output.fits !== 'function') return true
+
+    return this.output.fits({ board: this.gameManager.properties.board.properties })
   }
 
   draw () {
@@ -144,6 +154,7 @@ class Game {
     if (next === this.interval) return
 
     this.interval = next
+    this.loop.reschedule()
     this.draw()
   }
 

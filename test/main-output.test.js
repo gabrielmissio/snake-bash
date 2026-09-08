@@ -98,3 +98,24 @@ test('MainOutput redraws nothing when the state has not changed', () => {
 
   assert.strictEqual(harness.chunks.length, afterFirst)
 })
+
+test('MainOutput reports whether the board fits the window', () => {
+  const state = makeState()
+
+  const roomy = makeOutput({ size: { rows: 40, columns: 120 } })
+  assert.strictEqual(roomy.output.fits(state), true)
+
+  const cramped = makeOutput({ size: { rows: 8, columns: 20 } })
+  assert.strictEqual(cramped.output.fits(state), false)
+})
+
+test('MainOutput treats a non-terminal as always fitting', () => {
+  const screen = new Screen({ stdout: { isTTY: false, write: () => {} }, interactive: false })
+  const output = new MainOutput({
+    screen,
+    theme: new Theme({ enabled: false }),
+    terminal: { interactive: false, size: { rows: 2, columns: 2 } }
+  })
+
+  assert.strictEqual(output.fits(makeState()), true)
+})

@@ -6,6 +6,14 @@ All notable changes to this project are documented here.
 
 ### Fixed
 
+- **The game no longer freezes for seconds at a time.** Frames were scheduled
+  against `Date.now()`, the wall clock, which steps whenever the machine
+  corrects it -- NTP, resuming a VM, or WSL2 resyncing after the host sleeps.
+  A backwards step of N left the next frame's deadline N in the future, so the
+  game stalled for exactly that long and then carried on as if nothing had
+  happened. On the WSL2 box this was found on, the clock steps back about 470ms
+  every 31 seconds. Frames are now scheduled on a monotonic clock, and no frame
+  is ever allowed to wait longer than one interval.
 - **The terminal no longer blinks.** Every frame used to call `console.clear()`,
   blanking the screen, and then repaint it with 246 separate writes to stdout --
   one per cell. The screen was empty for part of every frame, which is what the
@@ -35,6 +43,11 @@ All notable changes to this project are documented here.
   leak through as a literal letter.
 - **Filling the board wins** instead of throwing on an empty position range.
 - **Game over leaves the wall intact** instead of drawing the snake over it.
+- **Changing speed is felt immediately.** `+` and `-` left the frame already
+  queued at the old pace, so a speed change could be ignored for up to half a
+  second.
+- **The snake no longer moves behind the "terminal too small" notice**, where it
+  would run into a wall the player could not see.
 
 ### Added
 

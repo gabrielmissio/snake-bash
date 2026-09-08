@@ -1,15 +1,22 @@
+const { performance } = require('node:perf_hooks')
+
 /**
  * Fixed-timestep loop.
  *
- * The old loop rescheduled itself with `setTimeout(next, interval)` after doing
- * the frame's work, so every frame ran late by however long that work took and
- * the drift accumulated. This one schedules against an absolute deadline, which
- * keeps the cadence even -- an uneven cadence reads as stutter.
+ * Frames are scheduled against an absolute deadline rather than by restarting
+ * a timer after the frame's work, so the cadence stays even instead of drifting
+ * by however long each frame took.
+ *
+ * The deadline is measured on a monotonic clock. Wall-clock time is not safe
+ * here: it steps whenever the machine corrects it (NTP, resuming a VM, the WSL2
+ * clock resyncing after the host sleeps). A backwards step would leave the
+ * deadline that far in the future and freeze the game for exactly that long.
  */
 class GameLoop {
-  constructor ({ onTick, getInterval }) {
+  constructor ({ onTick, getInterval, now = () => performance.now() }) {
     this.onTick = onTick
     this.getInterval = getInterval
+    this.now = now
     this.timer = null
     this.running = false
     this.nextTickAt = 0
@@ -23,7 +30,7 @@ class GameLoop {
     if (this.running) return
 
     this.running = true
-    this.nextTickAt = Date.now() + this.getInterval()
+    this.nextTickAt = this.now() + this.getInterval()
     this.schedule()
   }
 
@@ -36,8 +43,27 @@ class GameLoop {
     }
   }
 
+  /** Re-arms the pending frame, so a speed change is felt immediately. */
+  reschedule () {
+    if (!this.running) return
+
+    if (this.timer !== null) {
+      clearTimeout(this.timer)
+      this.timer = null
+    }
+
+    this.nextTickAt = Math.min(this.nextTickAt, this.now() + this.getInterval())
+    this.schedule()
+  }
+
   schedule () {
-    const delay = Math.max(0, this.nextTickAt - Date.now())
+    const interval = this.getInterval()
+    const remaining = this.nextTickAt - this.now()
+
+    // A frame must never wait longer than one interval, whatever the deadline
+    // says. This is what keeps a clock anomaly from stalling the game.
+    const delay = Math.min(interval, Math.max(0, remaining))
+
     this.timer = setTimeout(() => this.tick(), delay)
   }
 
@@ -45,12 +71,16 @@ class GameLoop {
     this.timer = null
     if (!this.running) return
 
-    this.nextTickAt += this.getInterval()
+    const interval = this.getInterval()
+    this.nextTickAt += interval
 
-    // If we fell badly behind (a suspended laptop, a stalled terminal) drop the
-    // backlog instead of replaying it as a burst of catch-up frames.
-    const now = Date.now()
-    if (this.nextTickAt < now) this.nextTickAt = now + this.getInterval()
+    // Resync when the deadline stops making sense: behind us because we fell
+    // back (a stalled terminal, a suspended machine), or implausibly far ahead.
+    // Replaying the backlog as a burst of frames would be as bad as stalling.
+    const now = this.now()
+    const hasFallenBehind = this.nextTickAt < now
+    const isTooFarAhead = this.nextTickAt > now + interval
+    if (hasFallenBehind || isTooFarAhead) this.nextTickAt = now + interval
 
     this.onTick()
 
