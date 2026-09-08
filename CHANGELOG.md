@@ -2,6 +2,35 @@
 
 All notable changes to this project are documented here.
 
+## [Unreleased]
+
+### Changed
+
+- **Node 22 is now the minimum.** Node 18 and Node 20 have both reached end of
+  life, so they are no longer tested or supported.
+- **A stray argument is now an error.** `snake-bash 20` used to start a default
+  15x15 game and drop the size in silence. It now says so, and points at the
+  flag that would have worked.
+
+### Security
+
+- **`--size` is capped at 200.** It had a lower bound but no upper one, so a
+  single typo could allocate until the process died: `--size 10000` held 4.3 GB
+  of RSS and thrashed the garbage collector for over three minutes before
+  crashing. On a shared machine that is long enough for the OOM killer to go
+  after whatever else happens to be running. 200 is already far past what any
+  terminal can draw.
+- **Control characters in arguments are neutralised before being echoed back.**
+  An escape sequence smuggled through `argv` reached the terminal verbatim
+  inside the error message, where it was acted on rather than read.
+
+### Fixed
+
+- **A target outside the grid is ignored** instead of raising a `TypeError`.
+  `Board.getCostumeAt` already guarded its reads; the write path did not.
+- **The terminal is restored on the async crash path too**, through an
+  `unhandledRejection` handler alongside the existing `uncaughtException` one.
+
 ## [2.0.0] - 2026-09-08
 
 ### Fixed

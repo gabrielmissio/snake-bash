@@ -5,13 +5,21 @@ on:
     branches: [main]
   pull_request:
 
+permissions:
+  contents: read
+
 jobs:
   check:
-    runs-on: ubuntu-latest
+    runs-on: ${{ matrix.os }}
 
     strategy:
+      # Terminal behaviour is the most platform-dependent thing this game does
+      # (raw mode, the alternate screen, ANSI). One platform failing must not
+      # hide the result on the others.
+      fail-fast: false
       matrix:
-        node-version: [18.x, 20.x, 22.x]
+        os: [ubuntu-latest, macos-latest, windows-latest]
+        node-version: [22.x, 24.x]
 
     steps:
       - uses: actions/checkout@v4

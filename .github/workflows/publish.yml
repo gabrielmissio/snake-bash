@@ -1,0 +1,37 @@
+name: Publish
+
+on:
+  release:
+    types: [published]
+
+permissions:
+  contents: read
+
+jobs:
+  publish:
+    runs-on: ubuntu-latest
+
+    permissions:
+      contents: read
+      # Lets npm attach a signed provenance statement to the tarball, so anyone
+      # installing it can verify it was built from this repo at this commit.
+      # The package has no runtime dependencies, which makes that attestation
+      # cover the whole thing you are actually running.
+      id-token: write
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22.x
+          registry-url: https://registry.npmjs.org
+          cache: npm
+
+      - run: npm ci
+
+      # prepublishOnly runs the linter and the test suite before anything is
+      # uploaded.
+      - run: npm publish --provenance --access public
+        env:
+          NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
