@@ -25,7 +25,19 @@ class Board {
     })
   }
 
+  isInside ({ row, column }) {
+    return row >= 0 && row < this.row && column >= 0 && column < this.column
+  }
+
+  getCostumeAt ({ row, column }) {
+    if (!this.isInside({ row, column })) return undefined
+
+    return this.properties[row][column]
+  }
+
   updateTarget ({ target }) {
+    if (!target.position) return
+
     const { row, column } = target.position
     this.properties[row][column] = TARGET
   }

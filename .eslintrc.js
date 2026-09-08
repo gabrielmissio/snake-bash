@@ -6,6 +6,12 @@ module.exports = {
   },
   extends: 'standard',
   overrides: [
+    {
+      files: ['test/**/*.js'],
+      env: {
+        node: true
+      }
+    }
   ],
   parserOptions: {
     ecmaVersion: 'latest'

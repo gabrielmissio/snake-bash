@@ -1,105 +1,202 @@
 #!/usr/bin/env node
 
-const Outputs = require('../outputs')
-const { KeyboardInput } = require('../inputs')
-const { DirectionsEnum } = require('../utils/enums')
-const { RUNNING, GAMEOVER } = require('../utils/enums/status-enum')
+const { KeyboardInput, KeyCodes } = require('../inputs')
+const { DevelopmentOutput, MainOutput, Screen, Terminal, Theme } = require('../outputs')
+const { DirectionsEnum, StatusEnum } = require('../utils/enums')
+const { version } = require('../../package.json')
+const Cli = require('./cli')
+const GameLoop = require('./game-loop')
 const { makeGameManager } = require('./game-manager-factory')
 
-const defaultOutputMode = 'MainOutput'
-const outputMode = process.env.OUTPUT_MODE ?? defaultOutputMode
-const output = Outputs[outputMode]
+const { RUNNING, PAUSED } = StatusEnum
+const { MIN_INTERVAL, MAX_INTERVAL, STEP } = Cli.SPEED_LIMITS
 
-const gameManager = makeGameManager()
-const { board, snake } = gameManager.properties
-
-let snakeFrameDirection = snake.currentDirection
-let intervalBetweenFramesInMilliseconds = 100
-
-function nextFrame () {
-  snake.changeDirection(snakeFrameDirection)
-  snake.move({
-    isScore: () => gameManager.isScore(),
-    isGameOver: () => gameManager.isGameOver(),
-    gameOverHandler: () => gameManager.gameOverHandler(),
-    scoreHandler: () => gameManager.scoreHandler()
-  })
-  board.updateSnake({ snake })
-
-  drawFrameState()
-
-  if (gameManager.properties.status === RUNNING) {
-    run()
-  }
+const DIRECTION_KEYS = {
+  [KeyCodes.ARROW_UP]: DirectionsEnum.UP,
+  [KeyCodes.ARROW_DOWN]: DirectionsEnum.DOWN,
+  [KeyCodes.ARROW_RIGHT]: DirectionsEnum.RIGHT,
+  [KeyCodes.ARROW_LEFT]: DirectionsEnum.LEFT,
+  [KeyCodes.APP_ARROW_UP]: DirectionsEnum.UP,
+  [KeyCodes.APP_ARROW_DOWN]: DirectionsEnum.DOWN,
+  [KeyCodes.APP_ARROW_RIGHT]: DirectionsEnum.RIGHT,
+  [KeyCodes.APP_ARROW_LEFT]: DirectionsEnum.LEFT,
+  8: DirectionsEnum.UP,
+  2: DirectionsEnum.DOWN,
+  6: DirectionsEnum.RIGHT,
+  4: DirectionsEnum.LEFT
 }
 
-function drawFrameState () {
-  output.clear()
+function main (argv) {
+  let options
 
-  output.drawInstructions({ quitKey: 'q', restartKey: 'r' })
-  output.drawGameplayInfo({
-    score: gameManager.properties.score,
-    framesPerSecond: (1000 / intervalBetweenFramesInMilliseconds).toFixed(2),
-  })
-  output.drawBoard({ board: board.properties })
-
-  if (gameManager.properties.status === GAMEOVER) {
-    output.drawGameOver()
-  }
-}
-
-function run () {
-  setTimeout(nextFrame, intervalBetweenFramesInMilliseconds)
-}
-
-function quitGame (key) {
-  return key === 'q'
-}
-
-function resetGame () {
-  const isGameOverStatus = gameManager.properties.status === GAMEOVER
-  if (isGameOverStatus) run()
-
-  gameManager.reset()
-  snakeFrameDirection = snake.currentDirection
-}
-
-function parseInput (key) {
-  const arrowKeys = {
-    '\u001B[A': DirectionsEnum.UP,
-    '\u001B[B': DirectionsEnum.DOWN,
-    '\u001B[C': DirectionsEnum.RIGHT,
-    '\u001B[D': DirectionsEnum.LEFT
+  try {
+    options = Cli.parse(argv)
+  } catch (error) {
+    process.stderr.write(`${error.message}\n\nTry "snake-bash --help".\n`)
+    process.exitCode = 1
+    return
   }
 
-  return arrowKeys[key] ?? parseInt(key, 10)
+  if (options.help) return process.stdout.write(Cli.helpText())
+  if (options.version) return process.stdout.write(`${version}\n`)
+
+  new Game({ options }).start()
 }
 
-function updateSnakeDirection (key) {
-  if (key === '+') {
-    if (intervalBetweenFramesInMilliseconds > 0) {
-      intervalBetweenFramesInMilliseconds -= 10
+class Game {
+  constructor ({ options }) {
+    this.options = options
+    this.interval = options.interval
+    this.isShuttingDown = false
+
+    this.gameManager = makeGameManager(options)
+    this.terminal = new Terminal()
+    this.screen = new Screen({ interactive: this.terminal.interactive })
+    this.output = this.makeOutput()
+
+    this.loop = new GameLoop({
+      onTick: () => this.tick(),
+      getInterval: () => this.interval
+    })
+
+    this.input = new KeyboardInput({
+      eventHandler: (key) => this.handleKey(key),
+      stopCondition: (key) => Game.isQuitKey(key)
+    })
+  }
+
+  makeOutput () {
+    const useDevelopmentOutput = process.env.OUTPUT_MODE === 'DevelopmentOutput'
+    if (useDevelopmentOutput) return new DevelopmentOutput({ screen: this.screen })
+
+    const theme = new Theme({
+      enabled: this.options.color && Theme.isColorSupported()
+    })
+
+    return new MainOutput({ screen: this.screen, theme, terminal: this.terminal })
+  }
+
+  static isQuitKey (key) {
+    return key === 'q' || key === KeyCodes.CTRL_C || key === KeyCodes.CTRL_D
+  }
+
+  start () {
+    this.registerShutdownHandlers()
+    this.terminal.open()
+
+    // A resize invalidates every cached line, so repaint the whole frame once.
+    this.terminal.onResize = () => {
+      this.screen.invalidate()
+      this.draw()
     }
-    if (gameManager.properties.status === GAMEOVER) drawFrameState()
-  } else if (key === '-') {
-    intervalBetweenFramesInMilliseconds += 10
-    if (gameManager.properties.status === GAMEOVER) drawFrameState()
-  } else if (key === 'r') {
-    resetGame()
+
+    this.input.listen()
+    this.draw()
+    this.loop.start()
   }
 
-  const parsedKey = parseInput(key)
-  const allowedKey = Object.values(DirectionsEnum).includes(parsedKey)
+  tick () {
+    const { snake, board } = this.gameManager.properties
 
-  if (allowedKey) {
-    snakeFrameDirection = parsedKey
+    snake.applyQueuedDirection()
+    snake.move({
+      isScore: () => this.gameManager.isScore(),
+      isGameOver: () => this.gameManager.isGameOver(),
+      gameOverHandler: () => this.gameManager.gameOverHandler(),
+      scoreHandler: () => this.gameManager.scoreHandler()
+    })
+    board.updateSnake({ snake })
+
+    this.draw()
+
+    if (this.gameManager.properties.status !== RUNNING) this.loop.stop()
+  }
+
+  draw () {
+    const { board, score, bestScore, status } = this.gameManager.properties
+
+    this.output.render({
+      board: board.properties,
+      score,
+      bestScore,
+      status,
+      framesPerSecond: (1000 / this.interval).toFixed(1)
+    })
+  }
+
+  handleKey (key) {
+    if (Game.isQuitKey(key)) return this.shutdown(0)
+
+    const direction = DIRECTION_KEYS[key]
+    if (direction !== undefined) {
+      this.gameManager.properties.snake.changeDirection(direction)
+      return
+    }
+
+    if (key === '+' || key === '=') return this.changeSpeed(-STEP)
+    if (key === '-' || key === '_') return this.changeSpeed(STEP)
+    if (key === 'p' || key === ' ') return this.togglePause()
+    if (key === 'r') return this.restart()
+  }
+
+  changeSpeed (delta) {
+    const next = Math.min(MAX_INTERVAL, Math.max(MIN_INTERVAL, this.interval + delta))
+    if (next === this.interval) return
+
+    this.interval = next
+    this.draw()
+  }
+
+  togglePause () {
+    if (!this.gameManager.isPlayable()) return
+
+    this.gameManager.togglePause()
+
+    if (this.gameManager.properties.status === PAUSED) this.loop.stop()
+    else this.loop.start()
+
+    this.draw()
+  }
+
+  restart () {
+    this.loop.stop()
+    this.gameManager.reset()
+    this.draw()
+    this.loop.start()
+  }
+
+  registerShutdownHandlers () {
+    // Happens when the output is piped into something that exits first
+    // (`snake-bash | head`). That is not a crash worth a stack trace.
+    process.stdout.on('error', (error) => {
+      if (error.code === 'EPIPE') process.exit(0)
+    })
+
+    process.on('SIGINT', () => this.shutdown(0))
+    process.on('SIGTERM', () => this.shutdown(0))
+    process.on('SIGHUP', () => this.shutdown(0))
+
+    // Without this a crash would leave the user staring at the alternate screen
+    // with a hidden cursor and a terminal still in raw mode.
+    process.on('uncaughtException', (error) => this.shutdown(1, error))
+  }
+
+  shutdown (exitCode = 0, error = null) {
+    if (this.isShuttingDown) return
+    this.isShuttingDown = true
+
+    this.loop.stop()
+    this.input.close()
+    this.terminal.close()
+
+    const { score, bestScore } = this.gameManager.properties
+    if (error) process.stderr.write(`${error.stack ?? error}\n`)
+    else process.stdout.write(`Thanks for playing! Score: ${score} | Best: ${bestScore}\n`)
+
+    process.exit(exitCode)
   }
 }
 
-const input = new KeyboardInput({
-  eventHandler: updateSnakeDirection,
-  stopCondition: quitGame
-})
+if (require.main === module) main(process.argv.slice(2))
 
-input.listen()
-run()
+module.exports = { Game, main }
